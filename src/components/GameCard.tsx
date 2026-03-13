@@ -13,27 +13,47 @@ export default function GameCard({ game }: { game: Game }) {
   return (
     <Link
       to={`/games/${game.id}`}
-      className="block border-2 border-border bg-card hover:border-primary/50 transition-colors duration-150 p-4 group"
+      className="block border-2 border-border bg-card hover:border-primary/50 transition-colors duration-150 group overflow-hidden"
     >
-      <div className="flex items-start justify-between mb-3">
-        <h3 className="font-heading text-lg font-bold group-hover:text-primary transition-colors">
-          {game.name}
-        </h3>
-        <Badge className={`text-xs border ${complexityColor[game.complexity]}`}>
-          {game.complexity}
-        </Badge>
-      </div>
-      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{game.description}</p>
-      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1"><Users className="w-3 h-3" />{game.playerCount}</span>
-        <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{game.playTime}</span>
-        <span className="flex items-center gap-1"><BarChart3 className="w-3 h-3" />{game.category}</span>
-      </div>
-      {game.expansions.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-border">
-          <span className="text-xs text-accent">{game.expansions.length} expansion{game.expansions.length > 1 ? 's' : ''} available</span>
+      {/* Game Image */}
+      {game.imageUrl ? (
+        <div className="w-full h-40 overflow-hidden">
+          <img
+            src={game.imageUrl}
+            alt={game.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            style={{ imageRendering: 'auto' }}
+          />
+        </div>
+      ) : (
+        <div className="w-full h-40 bg-muted flex items-center justify-center">
+          <span className="font-heading text-4xl font-bold text-muted-foreground/30">
+            {game.name.charAt(0)}
+          </span>
         </div>
       )}
+
+      <div className="p-4">
+        <div className="flex items-start justify-between mb-3">
+          <h3 className="font-heading text-lg font-bold group-hover:text-primary transition-colors">
+            {game.name}
+          </h3>
+          <Badge className={`text-xs border ${complexityColor[game.complexity]}`}>
+            {game.complexity}
+          </Badge>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{game.description}</p>
+        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+          <span className="flex items-center gap-1"><Users className="w-3 h-3" />{game.playerCount}</span>
+          <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{game.playTime}</span>
+          <span className="flex items-center gap-1"><BarChart3 className="w-3 h-3" />{game.category}</span>
+        </div>
+        {game.expansions.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-border">
+            <span className="text-xs text-accent">{game.expansions.length} expansion{game.expansions.length > 1 ? 's' : ''} available</span>
+          </div>
+        )}
+      </div>
     </Link>
   );
 }

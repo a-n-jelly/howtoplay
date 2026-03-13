@@ -63,6 +63,7 @@ export interface Expansion {
 export interface Game {
   id: string;
   name: string;
+  imageUrl?: string;
   description: string;
   playerCount: string;
   playTime: string;
