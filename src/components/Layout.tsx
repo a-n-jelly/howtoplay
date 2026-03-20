@@ -1,5 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Dice5, Library, Plus, Home } from 'lucide-react';
+import { Dice5, Library, Plus, Home, LogOut, LogIn } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
 
 const navItems = [
   { to: '/', icon: Home, label: 'Home' },
