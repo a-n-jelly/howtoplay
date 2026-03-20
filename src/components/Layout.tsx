@@ -11,6 +11,7 @@ const navItems = [
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
