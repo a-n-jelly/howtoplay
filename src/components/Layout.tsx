@@ -1,5 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Dice5, Library, Plus, Home } from 'lucide-react';
+import { Dice5, Library, Plus, Home, LogOut, LogIn } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
 
 const navItems = [
   { to: '/', icon: Home, label: 'Home' },
@@ -9,6 +11,7 @@ const navItems = [
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
@@ -19,7 +22,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Dice5 className="w-7 h-7 text-primary" />
             <span className="font-heading text-xl font-bold tracking-tight">GameGuide</span>
           </Link>
-          <nav className="hidden sm:flex gap-1">
+          <nav className="hidden sm:flex gap-1 items-center">
             {navItems.map(({ to, label }) => (
               <Link
                 key={to}
@@ -33,6 +36,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 {label}
               </Link>
             ))}
+            {user ? (
+              <Button variant="ghost" size="sm" onClick={signOut} className="ml-2 gap-1.5 text-muted-foreground hover:text-foreground">
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </Button>
+            ) : (
+              <Link to="/auth">
+                <Button variant="ghost" size="sm" className="ml-2 gap-1.5 text-muted-foreground hover:text-foreground">
+                  <LogIn className="w-4 h-4" />
+                  Sign In
+                </Button>
+              </Link>
+            )}
           </nav>
         </div>
       </header>
