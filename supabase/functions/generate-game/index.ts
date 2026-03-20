@@ -1,23 +1,59 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const MAX_NAME_LENGTH = 100;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    // Auth check
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claims, error: authError } = await supabase.auth.getClaims(token);
+    if (authError || !claims?.claims) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Input validation
     const { name } = await req.json();
-    if (!name) {
+    if (!name || typeof name !== "string") {
       return new Response(JSON.stringify({ error: "Game name is required" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const trimmedName = name.trim();
+    if (trimmedName.length === 0 || trimmedName.length > MAX_NAME_LENGTH) {
+      return new Response(JSON.stringify({ error: `Game name must be 1-${MAX_NAME_LENGTH} characters` }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const safeName = trimmedName.replace(/[^\w\s\-'.,:!?()]/g, "");
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    if (!LOVABLE_API_KEY) {
+      console.error("LOVABLE_API_KEY is not configured");
+      return new Response(JSON.stringify({ error: "Service configuration error" }), {
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const systemPrompt = `You are a board game expert. Given a board game name, generate a comprehensive game guide using the generate_game_guide tool. Include accurate setup steps, learning steps, quick rules, turn phases, actions, rule snippets, tips for beginners and advanced players, first play walkthrough steps, and any known expansions. Be thorough and accurate.`;
 
@@ -31,7 +67,7 @@ serve(async (req) => {
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: `Generate a complete game guide for: "${name}"` },
+          { role: "user", content: `Generate a complete game guide for: "${safeName}"` },
         ],
         tools: [
           {
@@ -52,10 +88,7 @@ serve(async (req) => {
                     type: "array",
                     items: {
                       type: "object",
-                      properties: {
-                        stepNumber: { type: "number" },
-                        instruction: { type: "string" },
-                      },
+                      properties: { stepNumber: { type: "number" }, instruction: { type: "string" } },
                       required: ["stepNumber", "instruction"],
                     },
                   },
@@ -123,10 +156,7 @@ serve(async (req) => {
                     type: "array",
                     items: {
                       type: "object",
-                      properties: {
-                        text: { type: "string" },
-                        isBeginner: { type: "boolean" },
-                      },
+                      properties: { text: { type: "string" }, isBeginner: { type: "boolean" } },
                       required: ["text", "isBeginner"],
                     },
                   },
@@ -206,7 +236,7 @@ serve(async (req) => {
     });
   } catch (e) {
     console.error("generate-game error:", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), {
+    return new Response(JSON.stringify({ error: "An internal error occurred. Please try again." }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
