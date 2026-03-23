@@ -124,9 +124,14 @@ export default function AddGame() {
     }
   };
 
-  const handleSaveManual = () => {
+  const handleSaveManual = async () => {
     if (!name.trim()) {
       toast({ title: 'Name required', description: 'Please enter a game name.', variant: 'destructive' });
+      return;
+    }
+    if (!user) {
+      toast({ title: 'Sign in required', description: 'Please sign in to save games.', variant: 'destructive' });
+      navigate('/auth');
       return;
     }
 
@@ -161,9 +166,13 @@ export default function AddGame() {
       isCustom: true,
     };
 
-    saveCustomGame(game);
-    toast({ title: 'Game saved!', description: `${game.name} has been added to your library.` });
-    navigate(`/games/${game.id}`);
+    try {
+      await saveGame(game);
+      toast({ title: 'Game saved!', description: `${game.name} has been added to your library.` });
+      navigate(`/games/${game.id}`);
+    } catch (err) {
+      toast({ title: 'Save failed', description: 'Could not save game. Please try again.', variant: 'destructive' });
+    }
   };
 
   return (

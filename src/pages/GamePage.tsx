@@ -14,7 +14,11 @@ import ExpansionSelector from '@/components/ExpansionSelector';
 
 export default function GamePage() {
   const { id } = useParams<{ id: string }>();
-  const game = getGameById(id || '');
+  const { customGames } = useCustomGames();
+  const game = useMemo(
+    () => [...defaultGames, ...customGames].find(g => g.id === (id || '')),
+    [id, customGames]
+  );
   const [selectedExpansion, setSelectedExpansion] = useState<string | null>(null);
 
   if (!game) {
