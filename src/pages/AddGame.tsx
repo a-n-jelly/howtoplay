@@ -18,6 +18,8 @@ function generateId(name: string) {
 export default function AddGame() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
+  const { saveGame } = useCustomGames();
 
   const [gameName, setGameName] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
