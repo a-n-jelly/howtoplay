@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import Layout from '@/components/Layout';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useCustomGames } from '@/hooks/useCustomGames';
+import { useAuth } from '@/contexts/AuthContext';
 
 function generateId(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'game-' + Date.now();
