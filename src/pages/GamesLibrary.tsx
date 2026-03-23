@@ -1,17 +1,19 @@
 import { useState, useMemo } from 'react';
 import { Search, Filter } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { getAllGames } from '@/data/games';
+import { defaultGames } from '@/data/games';
 import { Complexity } from '@/data/types';
 import GameCard from '@/components/GameCard';
 import Layout from '@/components/Layout';
+import { useCustomGames } from '@/hooks/useCustomGames';
 
 const complexities: (Complexity | 'all')[] = ['all', 'low', 'medium', 'high'];
 
 export default function GamesLibrary() {
   const [search, setSearch] = useState('');
   const [complexity, setComplexity] = useState<Complexity | 'all'>('all');
-  const games = useMemo(() => getAllGames(), []);
+  const { customGames } = useCustomGames();
+  const games = useMemo(() => [...defaultGames, ...customGames], [customGames]);
 
   const filtered = games.filter(g => {
     if (!g.name.toLowerCase().includes(search.toLowerCase())) return false;

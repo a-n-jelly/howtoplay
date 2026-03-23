@@ -2,13 +2,15 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Dice5, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { getAllGames } from '@/data/games';
+import { defaultGames } from '@/data/games';
 import GameCard from '@/components/GameCard';
 import Layout from '@/components/Layout';
+import { useCustomGames } from '@/hooks/useCustomGames';
 
 export default function Index() {
   const [search, setSearch] = useState('');
-  const games = useMemo(() => getAllGames(), []);
+  const { customGames } = useCustomGames();
+  const games = useMemo(() => [...defaultGames, ...customGames], [customGames]);
 
   const filtered = games.filter(g =>
     g.name.toLowerCase().includes(search.toLowerCase())

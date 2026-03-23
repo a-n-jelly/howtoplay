@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Trash2, Save, Sparkles, ChevronDown, Loader2 } from 'lucide-react';
 import { Game, Complexity } from '@/data/types';
-import { saveCustomGame } from '@/data/games';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import Layout from '@/components/Layout';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useCustomGames } from '@/hooks/useCustomGames';
+import { useAuth } from '@/contexts/AuthContext';
 
 function generateId(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'game-' + Date.now();
@@ -17,6 +18,8 @@ function generateId(name: string) {
 export default function AddGame() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
+  const { saveGame } = useCustomGames();
 
   const [gameName, setGameName] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -105,16 +108,30 @@ export default function AddGame() {
     }
   };
 
-  const handleSaveGenerated = () => {
+  const handleSaveGenerated = async () => {
     if (!generatedGame) return;
-    saveCustomGame(generatedGame);
-    toast({ title: 'Game saved!', description: `${generatedGame.name} has been added to your library.` });
-    navigate(`/games/${generatedGame.id}`);
+    if (!user) {
+      toast({ title: 'Sign in required', description: 'Please sign in to save games.', variant: 'destructive' });
+      navigate('/auth');
+      return;
+    }
+    try {
+      await saveGame(generatedGame);
+      toast({ title: 'Game saved!', description: `${generatedGame.name} has been added to your library.` });
+      navigate(`/games/${generatedGame.id}`);
+    } catch (err) {
+      toast({ title: 'Save failed', description: 'Could not save game. Please try again.', variant: 'destructive' });
+    }
   };
 
-  const handleSaveManual = () => {
+  const handleSaveManual = async () => {
     if (!name.trim()) {
       toast({ title: 'Name required', description: 'Please enter a game name.', variant: 'destructive' });
+      return;
+    }
+    if (!user) {
+      toast({ title: 'Sign in required', description: 'Please sign in to save games.', variant: 'destructive' });
+      navigate('/auth');
       return;
     }
 
@@ -149,9 +166,13 @@ export default function AddGame() {
       isCustom: true,
     };
 
-    saveCustomGame(game);
-    toast({ title: 'Game saved!', description: `${game.name} has been added to your library.` });
-    navigate(`/games/${game.id}`);
+    try {
+      await saveGame(game);
+      toast({ title: 'Game saved!', description: `${game.name} has been added to your library.` });
+      navigate(`/games/${game.id}`);
+    } catch (err) {
+      toast({ title: 'Save failed', description: 'Could not save game. Please try again.', variant: 'destructive' });
+    }
   };
 
   return (
