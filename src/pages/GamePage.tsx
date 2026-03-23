@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Users, Clock, BarChart3 } from 'lucide-react';
-import { getGameById } from '@/data/games';
+import { defaultGames } from '@/data/games';
+import { useCustomGames } from '@/hooks/useCustomGames';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Layout from '@/components/Layout';
