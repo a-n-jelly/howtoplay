@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Trash2, Save, Sparkles, ChevronDown, Loader2 } from 'lucide-react';
 import { Game, Complexity } from '@/data/types';
-import { saveCustomGame } from '@/data/games';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
