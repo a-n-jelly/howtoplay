@@ -108,11 +108,20 @@ export default function AddGame() {
     }
   };
 
-  const handleSaveGenerated = () => {
+  const handleSaveGenerated = async () => {
     if (!generatedGame) return;
-    saveCustomGame(generatedGame);
-    toast({ title: 'Game saved!', description: `${generatedGame.name} has been added to your library.` });
-    navigate(`/games/${generatedGame.id}`);
+    if (!user) {
+      toast({ title: 'Sign in required', description: 'Please sign in to save games.', variant: 'destructive' });
+      navigate('/auth');
+      return;
+    }
+    try {
+      await saveGame(generatedGame);
+      toast({ title: 'Game saved!', description: `${generatedGame.name} has been added to your library.` });
+      navigate(`/games/${generatedGame.id}`);
+    } catch (err) {
+      toast({ title: 'Save failed', description: 'Could not save game. Please try again.', variant: 'destructive' });
+    }
   };
 
   const handleSaveManual = () => {
