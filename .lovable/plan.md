@@ -1,22 +1,23 @@
 
 
-# Plan: Wire Custom Games to Database
+# Plan: Add Delete UI for Custom Games
 
 ## What
-Create a `useCustomGames` hook that reads/writes from the database instead of localStorage, and update `AddGame.tsx`, `GamesLibrary.tsx`, `GamePage.tsx`, and `Index.tsx` to use it.
+Add a delete button with confirmation dialog to `GameCard.tsx` (library view) and `GamePage.tsx` (detail view) for custom games only.
 
 ## Steps
 
-1. **Create `src/hooks/useCustomGames.ts`** — hook using Supabase to fetch, save, and delete custom games for the authenticated user. Falls back gracefully when not logged in.
+1. **Update `GameCard.tsx`** — Add a trash icon button (visible only when `game.isCustom`) with an `AlertDialog` confirmation. Accept an `onDelete` callback prop.
 
-2. **Update `src/pages/AddGame.tsx`** — save generated games to database via the hook instead of localStorage. Require auth to save.
+2. **Update `GamesLibrary.tsx`** — Pass the `deleteGame` function from `useCustomGames` as the `onDelete` prop to `GameCard`.
 
-3. **Update `src/pages/GamesLibrary.tsx`** and **`src/pages/Index.tsx`** — use the hook to merge DB custom games with default games.
-
-4. **Update `src/pages/GamePage.tsx`** — fetch custom game from DB if not found in defaults.
-
-5. **Keep `src/data/games.ts`** — retain `defaultGames` exports but remove localStorage functions (or keep as fallback for unauthenticated users).
+3. **Update `GamePage.tsx`** — Add a delete button in the header section for custom games, with the same confirmation dialog pattern. On delete, navigate back to `/games`.
 
 ## Estimated Credits
-**2-3 messages** — one for the hook + data layer, one or two for updating all consuming pages.
+**1 message** to implement all three file changes.
+
+---
+
+## Re: End-to-End Test Flow
+Testing signup → generate game → save → verify persistence → delete would be **0 additional build messages** — that's a manual verification step you'd do in the preview. Just sign up, create a game, refresh, confirm it's there, then delete it.
 
