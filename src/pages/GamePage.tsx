@@ -1,10 +1,16 @@
 import { useState, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Users, Clock, BarChart3 } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Users, Clock, BarChart3, Trash2 } from 'lucide-react';
 import { defaultGames } from '@/data/games';
 import { useCustomGames } from '@/hooks/useCustomGames';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import Layout from '@/components/Layout';
 import SetupChecklist from '@/components/SetupChecklist';
 import LearnStepper from '@/components/LearnStepper';
