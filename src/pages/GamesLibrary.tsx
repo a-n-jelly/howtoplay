@@ -12,7 +12,7 @@ const complexities: (Complexity | 'all')[] = ['all', 'low', 'medium', 'high'];
 export default function GamesLibrary() {
   const [search, setSearch] = useState('');
   const [complexity, setComplexity] = useState<Complexity | 'all'>('all');
-  const { customGames } = useCustomGames();
+  const { customGames, deleteGame } = useCustomGames();
   const games = useMemo(() => [...defaultGames, ...customGames], [customGames]);
 
   const filtered = games.filter(g => {
@@ -58,7 +58,7 @@ export default function GamesLibrary() {
         {/* Results */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map(game => (
-            <GameCard key={game.id} game={game} />
+            <GameCard key={game.id} game={game} onDelete={game.isCustom ? deleteGame : undefined} />
           ))}
         </div>
 
