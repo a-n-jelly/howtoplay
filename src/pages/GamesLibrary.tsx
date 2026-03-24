@@ -12,7 +12,7 @@ const complexities: (Complexity | 'all')[] = ['all', 'low', 'medium', 'high'];
 export default function GamesLibrary() {
   const [search, setSearch] = useState('');
   const [complexity, setComplexity] = useState<Complexity | 'all'>('all');
-  const { customGames } = useCustomGames();
+  const { customGames, deleteGame } = useCustomGames();
   const games = useMemo(() => [...defaultGames, ...customGames], [customGames]);
 
   const filtered = games.filter(g => {
