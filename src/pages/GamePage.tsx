@@ -53,7 +53,28 @@ export default function GamePage() {
 
         {/* Header */}
         <div className="border-2 border-border bg-card p-6 mb-6">
-          <h1 className="font-heading text-3xl font-bold mb-2">{game.name}</h1>
+          <div className="flex items-start justify-between">
+            <h1 className="font-heading text-3xl font-bold mb-2">{game.name}</h1>
+            {game.isCustom && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10">
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete "{game.name}"?</AlertDialogTitle>
+                    <AlertDialogDescription>This will permanently remove this game from your library.</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={async () => { await deleteGame(game.id); navigate('/games'); }} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
           <p className="text-sm text-muted-foreground mb-4">{game.description}</p>
           <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
             <span className="flex items-center gap-1"><Users className="w-3 h-3" />{game.playerCount} players</span>
