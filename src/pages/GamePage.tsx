@@ -17,6 +17,7 @@ import LearnStepper from '@/components/LearnStepper';
 import QuickRulesSheet from '@/components/QuickRulesSheet';
 import FirstPlayAssistant from '@/components/FirstPlayAssistant';
 import ExpansionSelector from '@/components/ExpansionSelector';
+import RulesChat from '@/components/RulesChat';
 
 export default function GamePage() {
   const { id } = useParams<{ id: string }>();
@@ -182,6 +183,7 @@ export default function GamePage() {
           </div>
         )}
       </div>
+      <RulesChat game={game} />
     </Layout>
   );
 }
