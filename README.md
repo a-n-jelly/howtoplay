@@ -6,6 +6,8 @@ How to Play is an AI-powered game companion built for the table — not for
 before the game, when you have time to prep, but during it, when someone's 
 confused and everyone just wants to play.
 
+🚧 **Live app**: [howtoplay.lovable.app](https://howtoplay.lovable.app) — work in progress
+
 ## 🎯 The problem
 
 Every game night has the same tax: someone spends 20 minutes reading rules, 
@@ -45,6 +47,8 @@ Wingspan, and Ticket to Ride ship by default.
 
 These are ideas on the backlog, not a committed roadmap:
 
+**🛳️ Onboarding flow** — a proper first-time user experience so new users 
+  can get started without guesswork
 - **👥 Shared table sessions** — one person opens the game, the whole table can 
   ask questions from their own device without everyone crowding one screen
 - **🎙️ Voice input** — hands-free rules Q&A for when your hands are full of 
